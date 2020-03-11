@@ -1,0 +1,188 @@
+Group     Home                          "Home"                   <house>
+
+
+
+
+
+Group     Entryway        "Entryway"   <frontdoor>   (Home)
+
+Group     GF                            "Ground Floor"           <groundfloor>   (Home)
+Group     FF                            "First Floor"            <firstfloor>    (Home)
+Group	 GG						   "Garage"				 <garage>		   (Home)
+
+Group 	 GG_Washroom				"Dryer"				 <dryer>		   (Home,GG)
+Group	 GCams						"Cameras"			 <camera>			
+Group 	  GF_Kueche			"Kitchen"			 <kitchen>	 (Home, GF)
+Group     GF_LivingDining               "Living & Dining Room"   <sofa>          (Home, GF)
+Group     GF_Bathroom        		"Bathroom"         	 <bath>          (Home, GF)
+Group 	 GF_Homeoffice			"Home Office"		 <office>	 (Home, GF)
+Group     GF_TerraceLiving         	"Living /Terrace"        <terrace>       (Home, GF)
+Group     GF_StreedLiving         	"Living / Road"          <sofa>          (Home, GF)
+Group     FF_NannyRoom                  "Room Angelina"          <woman_1>       (Home, FF)
+Group     FF_MasterBedroom    		"Master Bedroom"   	 <bedroom_red>   (Home, FF)
+Group	  Light_TerraceLiving		"Lampen"	<light>		(Home, GF_TerraceLiving) 
+Group 	  Light_StreedLiving		"Lampen"	<light>		(Home, GF_StreedLiving)
+Group 	  Light_LivingDining		"Lampen"	<light>		(Home, GF_LivingDining)
+
+
+
+//Items Things
+String Feuchtigkeit_node "Feuchtigkeit Boden [%s]" <garden> (Entryway, gDoor){channel="mqtt:topic:brokerhome:sensoren:feuchtigkeit_node"}String String windgeschw_node "Gewindigkeit Wind [%s]" <garden> (Entryway, gDoor){channel="mqtt:topic:brokerhome:sensoren:windgeschw_node"}
+
+
+//LED OSRAM
+Colorpicker changeLEDOsram <colorpicker> {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
+
+Switch changeLEDblue <LED_TV_Blue> { channel="mqtt:topic:brokerhome:ledblue:changeLEDblue" }
+
+Switch changeLEDred <LED_TV_Red> { channel="mqtt:topic:brokerhome:ledred:changeLEDred" }
+
+Switch changeLEDgreen <LED_TV_Green> { channel="mqtt:topic:brokerhome:ledgreen:changeLEDgreen" }
+
+Switch changeLEDall <LED_TV_all> { channel="mqtt:topic:brokerhome:ledall:changeLEDall" }
+
+
+//Wand Thermostat für alle Wohnzimmer Kueche Esszimmer Anzeige Temperatur
+Number    GF_total_Temperature   "Total temperature global [%.1f °C]"    <temperature>   (GF_StreedLiving,gTemperature){ channel="homematic:HG-HM-TC-IT-WM-W-EU:008b1085:OEQ1671164:2#ACTUAL_TEMPERATURE" } 
+                                                                                                                               
+
+Number    he_set_GF_total_Temperature "Set Manu Mode [%.1f °C]" <temperature> (GF_StreedLiving, gTemperature){ channel="homematic:HG-HM-TC-IT-WM-W-EU:008b1085:OEQ1671164:2#MANU_MODE" }
+
+
+//haustuerklingel
+Switch GF_Klingel	"Türklingelzustand"  (GF_LivingDining)        {channel="homematic:HG-HM-Sen-DB-PCB:008b1085:PEQ0653045:1#PRESS_SHORT"}
+
+
+//Schalter Sirene  an/aus
+Switch 	  Alarmswitch 	      <light>
+
+//Schalter Pi Badezimmer
+
+Switch PiBadezimmer  {channel="exec:command:shutdownpiBad:run"}
+//Schalter Sirene
+
+Switch 	  alarmbox	      <siren>		      {channel="homematic:HG-HM-LC-Sw1-Ba-PCB:008b1085:MEQ0097931:1#STATE"}    	
+
+
+//Steeckdose Trockner muss noch gemacht werden
+Switch    IP_Socket_1      <energy>        ["Switchable"]    {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:1#STATE"}
+// Steckdose Osram 1
+Switch 	  Osram_1	<energy>	["Switchable"] {channel="zigbee:device:edfce48b:7cb03eaa0a0712f5:7CB03EAA0A0712F5_3_switch"}
+Switch 	  Osram_2	<energy>	["Switchable"] {channel="zigbee:device:edfce48b:7cb03eaa0a07112b:7CB03EAA0A07112B_3_switch"}
+
+
+
+
+//Heizung runter fahren
+Switch Heizung_down	   <humidity>	   [GG_Washroom]	  
+Switch Heizung_auto  <humidity> { channel="homematic:HG-HM-TC-IT-WM-W-EU:008b1085:OEQ1671164:2#AUTO_MODE"}                            
+
+//Tuerkontakt Eingang 
+Contact   Entryway_Door   "Door [MAP(windowcontact.map):%s]"       <door>        (Entryway, gDoor)      {channel="homematic:HG-HM-Sec-SCo:008b1085:MEQ0722555:1#STATE"}
+
+
+//Leistungsmessung Trockner
+Number leistungsmesserFrequenz     "Frequenz [%.1f Hz]"  (GG_Washroom) {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:2#FREQUENCY"}
+Number leistungsmesserSpannung     "Spannung [%.1f V]"     (GG_Washroom) {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:2#VOLTAGE"}
+Number leistungsmesserStrom        "Strom [%.1f mA]"       (GG_Washroom) {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:2#CURRENT"}
+Number leistungsmesserLeistung     "Leistung [%.1f Watt]"  (GG_Washroom) {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:2#POWER"}
+Number leistungsmesserSummeKwh     "Summe KWH [%.1f Watt]" (GG_Washroom) {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:2#ENERGY_COUNTER"}
+ 
+Switch leistungsmesserSchalten     "Status Socket"    		       (GG_Washroom)  {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:1#STATE"}
+Switch statusTrockner		   "Dryer finish"    		       (GG_Washroom)  
+
+////
+//Aussentempheratur // muss noch gemacht werden
+Number    GF_Outside_Temperature   "Measured temperature mobile [%.1f °C]"    <temperature>   (GF_TerraceLiving, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#ACTUAL_TEMPERATURE"}
+//Battery Aussentemp
+Number	  GF_Outside_Temperature_BATTERY_STATE "Battery Outside Voltage  [%.1f V]"	<energy>	(GF_TerraceLiving, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#BATTERY_STATE"}
+Switch    GF_Outside_Temperature_BATTERY_low_Bat "Battery Outside Low [%s]" <battery> (GF_TerraceLiving, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:0#LOWBAT"}
+
+
+
+
+
+//Wohnzimmer Strasse	Thermostat	
+Number    he_set_temp_GF_StreedLiving_Temperature "Set temperature [%.1f °C]" <temperature> (GF_StreedLiving, gTemperature){ channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450878:4#SET_TEMPERATURE" }
+Number    GF_StreedLiving_Temperature   "Measured temperature Thermostat[%.1f °C]"    <temperature>   (GF_StreedLiving, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450878:4#ACTUAL_TEMPERATURE"}
+//Battery Wohnzimmer Strasse
+Number	  GF_StreedLiving_BATTERY_STATE "Battery Outside Voltage  [%.1f V]"	<energy>	(GF_StreedLiving, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450878:4#BATTERY_STATE"}
+Switch    GF_StreedLiving_BATTERY_low_Bat "Battery Outside Low [%s]" <battery> (GF_StreedLiving, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450878:0#LOWBAT"}
+
+
+//Buero
+Number    GF_Homeoffice_Temperature   "Measured temperature [%.1f °C]"    <temperature>   (GF_Homeoffice, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0854123:4#ACTUAL_TEMPERATURE"}
+Number    he_set_temp_GF_Homeoffice_Temperature "Set temperatur [%.1f °C] "  <temperature>  (GF_Homeoffice, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0854123:4#SET_TEMPERATURE" }
+//Buero Battery
+Number	  GF_Homeoffice_BATTERY_STATE "Battery Office Voltage  [%.1f V]"	<energy>	(GF_Homeoffice, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0854123:4#BATTERY_STATE"}
+Switch    GF_Homeoffice_BATTERY_low_Bat "Battery Office Low [%s]" <battery> (GF_Homeoffice, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0854123:0#LOWBAT"}
+
+
+//Esszimmer Thermostat
+Contact   GF_LivingDining_Window        "Window [MAP(windowcontact.map):%s]"                 <window>        (GF_LivingDining, gWindow)           {channel="homematic:HG-HM-Sec-SCo:008b1085:MEQ0722401:1#STATE"}
+Number    GF_LivingDining_Temperature   "Measured temperature [%.1f °C]"    <temperature>   (GF_LivingDining, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:NEQ1489522:4#ACTUAL_TEMPERATURE"}
+Number    he_set_temp_GF_LivingDining_Temperature "Set temperature [%.1f °C]"   <temperature>   (GF_LivingDining, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:NEQ1489522:4#SET_TEMPERATURE"}  
+//Battery Esszimmer
+Number	  GF_LivingDining_BATTERY_STATE "Battery  Living Voltage [%.1f V]"	<energy>	(GF_LivingDining, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:NEQ1489522:4#BATTERY_STATE"}
+Switch    GF_LivingDining_BATTERY_low_Bat "Battery Living low [%s]" <battery> (GF_LivingDining, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:NEQ1489522:0#LOWBAT"}
+
+
+//Esszimmer Fensterkontakt
+Contact   GF_TerraceLiving_Window        "Window [MAP(windowcontact.map):%s]"                 <window>        (GF_TerraceLiving, gWindow)           {channel="homematic:HG-HM-Sec-SCo:008b1085:OEQ0705291:1#STATE"}
+
+
+//Thermostat Balkon 
+Number    GF_TerraceLiving_Temperature   "Measured temperature [%.1f °C] "    <temperature>   (GF_TerraceLiving, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450853:4#ACTUAL_TEMPERATURE"}
+Number    he_set_temp_GF_TerraceLiving_Temperature "Set temperature [%.1f °C] " <temperature> (GF_TerraceLiving, gTemperature){ channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450853:4#SET_TEMPERATURE" }
+//Battery Balkon
+Number	  GF_TerraceLiving_BATTERY_STATE "Battery Terrace Voltage  [%.1f V]"	<energy>	(GF_TerraceLiving, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450853:4#BATTERY_STATE"}
+Switch    GF_TerraceLiving_BATTERY_low_Bat "Battery Terrace Low [%s]" <battery> (GF_TerraceLiving, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450853:0#LOWBAT"}
+
+
+
+
+
+
+//Fensterkontakt Badezimmer
+Contact   GF_Bathroom_Window        "Window [MAP(windowcontact.map):%s]"                 <window>        (GF_Bathroom, gWindow)           {channel="homematic:HG-HM-Sec-SCo:008b1085:MEQ0722327:1#STATE"}
+//Thermostat Badezimmer inaktiv
+Number    GF_Bathroom_Temperature   "Measured temperature [%.1f °C] "    <temperature>   (GF_Bathroom, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0856376:4#ACTUAL_TEMPERATURE"}
+Number    he_set_temp_GF_Bathroom_Temperature "Set temperature [%.1f °C] " <temperature> (GF_Bathroom, gTemperature){ channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0856376:4#SET_TEMPERATURE" }
+//Battery Badezimmer
+Number	  GF_Bathroom_BATTERY_STATE "Battery Bathroom Voltage  [%.1f V]"	<energy>	(GF_Bathroom, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0856376:4#BATTERY_STATE"}
+Switch    GF_Bathroom_BATTERY_low_Bat "Battery Bathroom Low [%s]" <battery> (GF_Bathroom, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0856376:0#LOWBAT"}
+
+
+
+//Fensterkontakt Elternschlaf
+Contact   FF_MasterBedroom_Window        "Window [MAP(windowcontact.map):%s]"                 <window>        (FF_MasterBedroom, gWindow)    {channel="homematic:HG-HM-Sec-SCo:008b1085:MEQ0722407:1#STATE"}       
+//Thermostat Elternschlaf
+Number    FF_MasterBedroom_Temperature   "Measured temperature [%.1f °C] "    <temperature>   (FF_MasterBedroom, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450839:4#ACTUAL_TEMPERATURE"}
+Number    he_set_temp_FF_MasterBedroom_Temperature "Set temperature [%.1f °C] " <temperature> (FF_MasterBedroom, gTemperature){ channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450839:4#SET_TEMPERATURE" }
+//Battery Badezimmer
+Number	  FF_MasterBedroom_BATTERY_STATE "Battery Master Bedroom Voltage  [%.1f V]"	<energy>	(FF_MasterBedroom, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450839:4#BATTERY_STATE"}
+Switch    FF_MasterBedroom_BATTERY_low_Bat "Battery Master Bedroom Low [%s]" <battery> (FF_MasterBedroom, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450839:0#LOWBAT"}
+
+
+//Thermostat Schlafzimmer Angelina
+Number    FF_NannyRoom_Temperature   "Measured temperature [%.1f °C]"    <temperature>   (FF_NannyRoom, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450855:4#ACTUAL_TEMPERATURE"}
+Number    he_set_temp_FF_NannyRoom_Temperature "Set temperature [%.1f °C]"    <temperature> (FF_NannyRoom, gTemperature){ channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450855:4#SET_TEMPERATURE"}
+//Battery Schlafzimmer Angelina
+Number	  FF_NannyRoom_BATTERY_STATE "Battery Master Bedroom Voltage  [%.1f V]"	<energy>	(FF_NannyRoom, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450855:4#BATTERY_STATE"}
+Switch    FF_NannyRoom_BATTERY_low_Bat "Battery Master Bedroom Low [%s]" <battery> (FF_NannyRoom, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450855:0#LOWBAT"}
+
+//Kueche
+
+Contact   GF_Kueche_Window        "Window [MAP(windowcontact.map):%s]"                 <window>        (GF_Kueche, gWindow) {channel="homematic:HG-HM-Sec-SCo:008b1085:OEQ0223343:1#STATE"}
+Number GF_Kueche_Temperature	 	"Measured temperature [%.1f °C]" <temperature>  (GF_Kueche, gTemperature) {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0859802:4#ACTUAL_TEMPERATURE"}
+Number he_set_temp_GF_Kueche_Tempterature    "Set temperature [%.1f °C]"  <temperature> (GF_Kueche, gTemperature) {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0859802:4#SET_TEMPERATURE"} 
+
+//Battery Kueche
+Number	  GF_Kueche_BATTERY_STATE "Battery Master Bedroom Voltage  [%.1f V]"	<energy>	(GF_Kueche, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0859802:4#BATTERY_STATE"}
+Switch    GF_Kueche_BATTERY_low_Bat "Battery Master Bedroom Low [%s]" <battery> (GF_Kueche, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:OEQ0859802:0#LOWBAT"}
+ 
+Group:Contact:OR(OPEN, CLOSED)   gWindow        "Window"        <window>        (Home)
+Group:Number:AVG                 gTemperature   "Temperature"   <temperature>   (Home)
+Group:Number:AVG                 gBattery   	"Battery"   <battery>   (Home)
+
+

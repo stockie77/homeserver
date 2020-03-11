@@ -1,0 +1,282 @@
+
+/*
+rule "Speedtest init"
+when
+    System started
+then
+	Alarmswitch.sendCommand(OFF)
+end
+*/
+
+
+//Tuerklingesensor
+
+rule "Event_DoorBell"
+when
+        Item GF_Klingel changed from OFF to ON
+then
+	 //logInfo("tuerklingel changed")
+	 var device="http://192.168.1.4:8081?action=jpeg"
+	 //val outputFile = "/home/openhabian/snap/tuerklingelbild.jpg"
+	 //var cmd = "curl -m 10 -o " + outputFile + " " + url
+
+	 var cmd ="ffmpeg -f MJPEG -y -i  http://192.168.1.4:8081?action=stream -r 1 -vframes 1 -q:v 1 /tmp/tuerklingelbild.jpg"
+	 executeCommandLine(cmd)
+	 //pushover("Es hat geklingelt!")
+	 Thread::sleep(5000)
+	 //sendPushoverMessage(pushoverBuilder("test message").withAttachment("/path/to/file.jpeg"))
+	 sendPushoverMessage(pushoverBuilder("Hier das Bild!").withAttachment("/tmp/tuerklingelbild.jpg"))	
+	 //pushover("Es hat geklingelt!")
+	 
+end
+
+//Batterie status check
+
+rule "Batterie THBuero leer"
+when
+    Item GF_Homeoffice_BATTERY_low_Bat changed to ON
+	
+then
+    pushover("Achtung Batterie vom Buero wechseln!")
+ 
+end
+
+
+rule "Batterie Aussentemp leer"
+when
+    Item GF_Outside_Temperature_BATTERY_low_Bat changed to ON
+	
+then
+    pushover("Achtung Batterie vom Aussesensor wechseln!")
+ 
+end
+
+
+rule "Batterie THEsszimmer leer"
+when
+    Item GF_LivingDining_BATTERY_STATE changed to ON
+	
+then
+    pushover("Achtung Batterie vom Esszimmer wechseln!")
+ 
+end
+
+
+rule "Batterie THBalkon leer"
+when
+    Item GF_TerraceLiving_BATTERY_STATE changed to ON
+	
+then
+    pushover("Achtung Batterie vom TH Balkon wechseln!")
+ 
+end
+
+rule "Batterie THBathroom leer"
+when
+    Item GF_Bathroom_BATTERY_STATE changed to ON
+	
+then
+    pushover("Achtung Batterie vom TH Bad wechseln!")
+ 
+end
+
+rule "Batterie THMasterroom leer"
+when
+    Item FF_MasterBedroom_BATTERY_STATE changed to ON
+	
+then
+    pushover("Achtung Batterie vom Elternschlafzimmer wechseln!")
+ 
+end
+
+
+rule "Batterie THAngelina leer"
+when
+    Item FF_NannyRoom_BATTERY_STATE changed to ON
+	
+then
+    pushover("Achtung Batterie von TH Zimmer Angelina wechseln!")
+ 
+end
+
+
+rule "Batterie THKueche leer"
+when
+    Item GF_Kueche_BATTERY_STATE changed to ON
+	
+then
+    pushover("Achtung Batterie vom TH Kueche wechseln!")
+ 
+end
+
+rule "Batterie THStreedLiving leer"
+when	
+	Item GF_StreedLiving_BATTERY_STATE changed to ON
+then
+	pushover("Achtung Batterie von TH WohnzimmerStrasse wechseln!")
+end
+
+
+
+
+//Steckdose und Trockner
+
+rule "Trockner"
+
+when 
+	Item leistungsmesserLeistung changed
+then
+	logInfo("Log","leistungsmesserLeistung changed")
+	logInfo("Log",leistungsmesserLeistung.state.toString)
+	if (leistungsmesserLeistung.state < 3 && statusTrockner.state==OFF)
+	{
+		sendNotification("uwe.stockemer@posteo.de", "Trockner ist fertig!")
+		sendNotification("doris.ewen@posteo.de", "Trockner ist fertig!")
+		statusTrockner.sendCommand(ON)
+		//logInfo("Log","statusTrockner <3")
+		//logInfo("Log",leistungsmesserLeistung.state.toString)
+	}
+	else
+	{
+		if (leistungsmesserLeistung.state > 100)
+		{
+		  statusTrockner.sendCommand(OFF)
+//		  logInfo("Log","statusTrockner >100")
+//		  logInfo("Log",leistungsmesserLeistung.state.toString)
+		}
+	}
+
+end 
+
+rule "Alarm_Window_Dinningroom"
+
+when
+	Item GF_LivingDining_Window received update
+then
+     	
+	if (GF_LivingDining_Window.state.toString=="OPEN" && Alarmswitch.state==ON)
+	{
+ 	pushover("Achtung Eindringling im Esszimmerfenster")
+	alarmbox.sendCommand(ON)
+	 
+        }     
+	
+end
+
+rule "Alarm_Balkontuer"
+
+when
+	Item GF_TerraceLiving_Window received update
+
+then
+	logInfo("tuerklingel changed")
+	if (GF_TerraceLiving_Window.state.toString=="OPEN" && Alarmswitch.state==ON)
+	{
+ 	pushover("Achtung Eindringling im Wohnzimmer")
+	alarmbox.sendCommand(ON) 
+        }     
+	
+
+end
+
+
+rule "Alarm_Eingangstuer"
+
+when
+	Item Entryway_Door received update
+
+then
+	if (Entryway_Door.state.toString=="OPEN" && Alarmswitch.state==ON)
+	{
+ 	pushover("Achtung Eindringling im Eingangsbereich")
+	alarmbox.sendCommand(ON) 
+        }     
+	
+
+end
+
+
+rule "remote_alarm_ein"
+		
+when 
+	//zweiter Knopf der Fernbedienung
+	Item remote_uwe_alarm_ein received update 	
+	
+then
+	if (Alarmswitch.state==OFF)
+	{
+		Alarmswitch.sendCommand(ON)
+		//pushover("Alarm ist eingeschaltet")
+ 		sendNotification("uwe.stockemer@posteo.de", "Alarm ist eingeschaltet")
+		sendNotification("doris.ewen@posteo.de", "Alarm ist eingeschaltet")
+
+	}
+end  
+
+rule "remote_alarm_aus"
+		
+when 
+	//zweiter Knopf der Fernbedienung
+	Item remote_uwe_alarm_aus received update
+	
+	
+then
+	if (Alarmswitch.state==ON)
+	{
+		Alarmswitch.sendCommand(OFF)
+		//pushover("Alarm ist ausgeschaltet")
+		sendNotification("uwe.stockemer@posteo.de", "Alarm ist ausgeschaltet")
+		sendNotification("doris.ewen@posteo.de", "Alarm ist ausgeschaltet")
+
+	}
+end  
+
+rule "Button Heizung_down"
+
+when Item Heizung_down received command
+
+then
+
+        var newValue = 15
+	if (receivedCommand == ON)
+	{
+	he_set_temp_GF_Bathroom_Temperature.postUpdate(15)
+        he_set_temp_GF_Bathroom_Temperature.sendCommand(15)
+        he_set_temp_GF_Homeoffice_Temperature.postUpdate(15)
+        he_set_temp_GF_Homeoffice_Temperature.sendCommand(15)
+        he_set_GF_total_Temperature.sendCommand(17)  
+	}
+	else
+	{
+        he_set_GF_total_Temperature.postUpdate(21) 
+	he_set_GF_total_Temperature.sendCommand(21)
+        he_set_temp_GF_Bathroom_Temperature.postUpdate(21)
+        he_set_temp_GF_Bathroom_Temperature.sendCommand(21)
+        Heizung_auto.sendCommand(ON) 
+	}
+
+end
+
+
+ 
+rule "Button Alarm_on_off" 
+when 
+    Item Alarmswitch received command
+then 
+   
+   if (receivedCommand == ON) {
+  
+		
+       		//pushover("Alarm ist eingeschaltet")
+		sendNotification("uwe.stockemer@posteo.de", "Alarm ist eingeschaltet")
+		sendNotification("doris.ewen@posteo.de", "Alarm ist eingeschaltet")
+
+       
+    } 
+    else {
+	
+        	//pushover("Alarm ist ausgeschaltet")
+		sendNotification("uwe.stockemer@posteo.de", "Alarm ist ausgeschaltet")
+		sendNotification("doris.ewen@posteo.de", "Alarm ist ausgeschaltet")	
+    } 
+end

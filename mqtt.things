@@ -1,0 +1,9 @@
+	
+Bridge mqtt:broker:brokerhome [ host="localhost", secure=false ]{
+    Thing topic sensoren {
+    Channels:
+       Type string : feuchtigkeit_node "Feuchtigkeit Node[%s]" [stateTopic="esp/bodenfeuchte"]
+       Type string : windgeschw_node "Windgeschwindigkeit Node[%s]" [stateTopic="esp/windgesch"]
+    }
+}
+
