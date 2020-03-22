@@ -32,6 +32,8 @@ Group 	  Light_LivingDining		"Lampen"	<light>		(Home, GF_LivingDining)
 //String Feuchtigkeit_node "Feuchtigkeit Boden [%s]" <garden> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:feuchtigkeit_node"}
 
 String Wind_node "Windsensor [%s]" <wind> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:wind_node"}
+//Aussentempheratur // muss noch gemacht werden
+Number    GF_Outside_Temperature   "Measured temperature mobile [%.1f °C]"    <temperature>   (GF_TerraceLiving, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#ACTUAL_TEMPERATURE"}
 
 //LED OSRAM
 Switch LEDOsram_Schalter {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
@@ -99,8 +101,7 @@ Switch leistungsmesserSchalten     "Status Socket"    		       (GG_Washroom)  {c
 Switch statusTrockner		   "Dryer finish"    		       (GG_Washroom)  
 
 ////
-//Aussentempheratur // muss noch gemacht werden
-Number    GF_Outside_Temperature   "Measured temperature mobile [%.1f °C]"    <temperature>   (GF_TerraceLiving, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#ACTUAL_TEMPERATURE"}
+
 //Battery Aussentemp
 Number	  GF_Outside_Temperature_BATTERY_STATE "Battery Outside Voltage  [%.1f V]"	<energy>	(GF_TerraceLiving, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#BATTERY_STATE"}
 Switch    GF_Outside_Temperature_BATTERY_low_Bat "Battery Outside Low [%s]" <battery> (GF_TerraceLiving, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:0#LOWBAT"}
