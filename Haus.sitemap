@@ -23,7 +23,10 @@ sitemap home label="Haus" {
         Group item=GG_Washroom
  
     }
-	 
+    Frame label="Outside"  {
+	Group item=GG_Outside
+
+	}	 
     Frame label="Camera" {
 	   Text label="Raspberry Camera" icon="camera" {
 		 Frame label="Raspberry camera" {
@@ -49,7 +52,6 @@ sitemap home label="Haus" {
             Default item=GF_Bathroom_Window label="Bathroom"
         }
 
-
         Text label="Temperature" icon="temperature" {
         Default item=GF_LivingDining_Temperature label="Living / Dining Room"
 	    Default item=GF_TerraceLiving_Temperature label="Living / Terrace"
@@ -72,6 +74,7 @@ sitemap home label="Haus" {
 			Default item=GF_StreedLiving_BATTERY_STATE label="TH Living/Street"
 			Default item=FF_NannyRoom_BATTERY_STATE label="TH Room Angelina"
 			Default item=GF_Kueche_BATTERY_STATE label="TH Kitchen"
+			
 
         }
 		Text label="Plugin" icon="energy"
@@ -89,8 +92,9 @@ sitemap home label="Haus" {
         }
        
         Text label="LED OSRAM" icon="colorwheel" {
+			Switch item=LEDOsram_Schalter label="LED Osram Strip" mappings=[ON="ON", OFF="OFF"]
         	Colorpicker item=changeLEDOsram label="LED OSRAM"  
-
+			Slider	item=LEDOsram_farbtemperatur label="Farb Temperatur"
         }
 
 
