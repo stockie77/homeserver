@@ -33,7 +33,7 @@ Group 	  Light_LivingDining		"Lampen"	<light>		(Home, GF_LivingDining)
 
 String Wind_node "Windsensor [%s]" <wind> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:wind_node"}
 //Aussentempheratur // muss noch gemacht werden
-Number    GF_Outside_Temperature   "Measured temperature mobile [%.1f °C]"    <temperature>   (GF_TerraceLiving, gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#ACTUAL_TEMPERATURE"}
+Number Outside_Temperature   "Measured temperature mobile [%.1f °C]"    <temperature>   (GG_Outside gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#ACTUAL_TEMPERATURE"}
 
 //LED OSRAM
 Switch LEDOsram_Schalter {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
