@@ -8,8 +8,10 @@ Group     Entryway        "Entryway"   <frontdoor>   (Home)
 
 Group     GF                            "Ground Floor"           <groundfloor>   (Home)
 Group     FF                            "First Floor"            <firstfloor>    (Home)
-Group	 GG						   "Garage"				 <garage>		   (Home)
+Group	 GG				"Outside" 	         <humidity>       (Home)
+Group	 GG			        "Garage"				 <garage>		   (Home)
 
+Group 	 GG_Outside			"Weather"				<sun_clouds>		(Home)
 Group 	 GG_Washroom				"Dryer"				 <dryer>		   (Home,GG)
 Group	 GCams						"Cameras"			 <camera>			
 Group 	  GF_Kueche			"Kitchen"			 <kitchen>	 (Home, GF)
@@ -27,12 +29,17 @@ Group 	  Light_LivingDining		"Lampen"	<light>		(Home, GF_LivingDining)
 
 
 //Items Things
-String Feuchtigkeit_node "Feuchtigkeit Boden [%s]" <garden> (Entryway, gDoor){channel="mqtt:topic:brokerhome:sensoren:feuchtigkeit_node"}String String windgeschw_node "Gewindigkeit Wind [%s]" <garden> (Entryway, gDoor){channel="mqtt:topic:brokerhome:sensoren:windgeschw_node"}
+//String Feuchtigkeit_node "Feuchtigkeit Boden [%s]" <garden> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:feuchtigkeit_node"}
 
+String Wind_node "Windsensor [%s]" <wind> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:wind_node"}
 
 //LED OSRAM
-Colorpicker changeLEDOsram <colorpicker> {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
+Switch LEDOsram_Schalter {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
+Color changeLEDOsram <colorpicker> {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
+Color LEDOsram_farbtemperatur "Lightstrip Farbtemperatur" {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_colortemperature"}
 
+
+//LED ESP
 Switch changeLEDblue <LED_TV_Blue> { channel="mqtt:topic:brokerhome:ledblue:changeLEDblue" }
 
 Switch changeLEDred <LED_TV_Red> { channel="mqtt:topic:brokerhome:ledred:changeLEDred" }
