@@ -1,0 +1,128 @@
+sitemap home label="Haus" {
+
+    Frame {
+        Group item=Entryway
+    }
+
+
+    Frame label="Ground Floor" icon="groundfloor" {
+        Group item=GF_LivingDining
+	Group item=GF_Bathroom
+	Group item=GF_TerraceLiving
+	Group item=GF_StreedLiving
+	Group item=GF_Homeoffice
+	Group item=GF_Kueche
+    }
+
+    Frame label="First Floor" icon="firstfloor" {
+        Group item=FF_NannyRoom
+	Group item=FF_MasterBedroom
+ 
+    }
+     Frame label="Garage" icon="garage" {
+        Group item=GG_Washroom
+ 
+    }
+    Frame label="Outside"  {
+	Group item=GG_Outside
+
+	}	 
+    Frame label="Camera" {
+	   Text label="Raspberry Camera" icon="camera" {
+		 Frame label="Raspberry camera" {
+		   //#Video url="http://192.168.1.4:8081?action=stream" encoding="mjpeg"
+		 // Image url="http://192.168.1.4:8081?action=jpeg"
+ 		 // Webview url="http://192.168.1.4:8081" height=12 icon=none
+		 Video url="http://192.168.1.4:8081?action=stream" encoding="mjpeg"
+		 }
+	   }
+	}
+    Frame {
+	Switch item=Alarmswitch label="Alarmsystem[%s]" mappings=[ON="ON", OFF="OFF"]
+	Switch item=alarmbox label="Siren" mappings=[ON="ON", OFF="OFF"]
+	Switch item=IP_Socket_1 label="Steckdose 1 OFF/ON" icon="energy"
+        Switch item=Heizung_auto label="Heading Status OFF/ON" icon="humidity"	
+	Switch item=Heizung_down label="Heading shutdown OFF/ON" icon="humidity"
+
+
+
+        Text label="Window" icon="window" {
+            Default item=GF_LivingDining_Window label="Living/Dining Room"
+	    Default item=GF_TerraceLiving_Window label="Living/Terrace"
+	    Default item=FF_MasterBedroom_Window label="Master Bedroom"
+	    Default item=GF_Kueche_Window label="Kitchen"
+            Default item=GF_Bathroom_Window label="Bathroom"
+        }
+
+        Text label="Temperature" icon="temperature" {
+        Default item=GF_LivingDining_Temperature label="Living / Dining Room"
+	    Default item=GF_TerraceLiving_Temperature label="Living / Terrace"
+	    Default item=GF_Outside_Temperature label="Outside / Terrace"
+	    Default item=GF_StreedLiving_Temperature label="Living / Road" 
+	    Default item=GF_Homeoffice_Temperature label="Home Office" 
+        Default item=FF_NannyRoom_Temperature label="Room Angelina"
+	    Default item=FF_MasterBedroom_Temperature label="Master Bedroom"
+	    Default item=GF_Bathroom_Temperature label="Bathroom"
+	    
+
+        }
+       Text label="Battery" icon="battery" {
+            Default item=GF_Homeoffice_BATTERY_STATE label="TH Home Office"
+			Default item=GF_Outside_Temperature_BATTERY_STATE label="Outside Sensor"
+			Default item=GF_LivingDining_BATTERY_STATE label="TH Living/Dining Room"
+			Default item=GF_TerraceLiving_BATTERY_STATE label="TH Living/Terrace Room"
+			Default item=GF_Bathroom_BATTERY_STATE label="TH Bath Room"
+			Default item=FF_MasterBedroom_BATTERY_STATE label="TH Master Bedroom"
+			Default item=GF_StreedLiving_BATTERY_STATE label="TH Living/Street"
+			Default item=FF_NannyRoom_BATTERY_STATE label="TH Room Angelina"
+			Default item=GF_Kueche_BATTERY_STATE label="TH Kitchen"
+			
+
+        }
+		Text label="Plugin" icon="energy"
+        {
+        	Switch item=Osram_1 label="Osram Operation Center OFF/ON" icon="energy"
+        	Switch item=Osram_2 label="Osram Office OFF/ON" icon="energy"
+        }
+		//Text label="LED TV" icon="colorwheel" {
+           //Switch item=changeLEDblue label="LED Blue"  mappings=[ON="ON", OFF="OFF"]
+	//	   Switch item=changeLEDred label="LED Red"  mappings=[ON="ON", OFF="OFF"]
+	//	   Switch item=changeLEDgreen label="LED Green"  mappings=[ON="ON", OFF="OFF"]
+	  //     Switch item=changeLEDall label="LED All"  mappings=[ON="ON", OFF="OFF"] 			
+			
+
+        // }
+         
+        Text label="LED OSRAM" icon="colorwheel" {
+			Frame{
+			Switch item=LEDOsram_Schalter label="LED Osram Strip" mappings=[ON="ON", OFF="OFF"]
+        		Colorpicker item=changeLEDOsram label="LED Farbschema"  
+			Slider	item=LEDOsram_farbtemperatur label="Farb Temperatur"
+			}
+			Frame{
+			Switch item=LEDOsram_Schalter_Terasse label="LED Terassenlampe" mappings=[ON="ON", OFF="OFF"]
+			Colorpicker item=changeLEDOsram_Terasse label="LED Farbschema" 
+			Slider item=LEDOsram_farbtemperatur_Terasse label="Farb Temperatur"
+			}
+        }
+
+
+
+	Frame {
+	Text item=SpeedtestSummary {
+  		Frame label="Ergebnisse" {
+    			Text item=SpeedtestResultDown
+    			Text item=SpeedtestResultUp
+    			Text item=SpeedtestResultPing
+  			}
+  		Frame label="Steuerung" {
+    			Text item=SpeedtestResultDate
+    			Text item=SpeedtestRunning label="Speedtest [%s]" visibility=[SpeedtestRunning != "-"]
+  	}		
+		}
+
+	}
+    }
+}
+
+   

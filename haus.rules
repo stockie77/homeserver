@@ -9,6 +9,70 @@ end
 */
 
 
+
+val String filename = "speedtest.rules"
+
+rule "Speedtest init"
+when
+    System started
+then
+    createTimer(now.plusSeconds(195)) [|
+        if (SpeedtestRerun.state == NULL) SpeedtestRerun.postUpdate(OFF)
+        if (SpeedtestRunning.state == NULL) SpeedtestRunning.postUpdate("-")
+        if (SpeedtestSummary.state == NULL || SpeedtestSummary.state == "")
+            SpeedtestSummary.postUpdate("⁉ (unbekannt)")
+    ]
+end
+
+
+
+
+
+rule "Speedtest"
+when
+    //Time cron "0 0 5,13 * * ?" or
+    //"0 0/5 * * * ?" 
+    Time cron "0 0/15 * * * ?" or
+    Item SpeedtestRerun received command ON
+then
+    logInfo(filename, "--> speedtest executed...")
+    SpeedtestRunning.postUpdate("Messung läuft...")
+
+    // update timestamp for last execution
+    SpeedtestResultDate.postUpdate(new DateTimeType())
+
+    // execute the script, you may have to change the path depending on your system
+    var String speedtestCliOutput = executeCommandLine("/usr/local/bin/speedtest-cli@@--simple", 120*1000)
+
+    // for debugging:
+    //var String speedtestCliOutput = "Ping: 43.32 ms\nDownload: 21.64 Mbit/s\nUpload: 4.27 Mbit/s"
+    //logInfo(filename, "--> speedtest output:\n" + speedtestCliOutput + "\n\n")
+
+    SpeedtestRunning.postUpdate("Datenauswertung...")
+
+    // starts off with a fairly simple error check, should be enough to catch all problems I can think of
+    if (speedtestCliOutput.startsWith("Ping") && speedtestCliOutput.endsWith("Mbit/s")) {
+        var String[] results = speedtestCliOutput.split("\\r?\\n")
+        var float ping = new java.lang.Float(results.get(0).split(" ").get(1))
+        var float down = new java.lang.Float(results.get(1).split(" ").get(1))
+        var float up   = new java.lang.Float(results.get(2).split(" ").get(1))
+        SpeedtestResultPing.postUpdate(ping)
+        SpeedtestResultDown.postUpdate(down)
+        SpeedtestResultUp.postUpdate(up)
+        SpeedtestSummary.postUpdate(String::format("ᐁ  %.1f Mbit/s  ᐃ %.1f Mbit/s (%.0f ms)", down, up, ping))
+        SpeedtestRunning.postUpdate("-")
+        logInfo(filename, "--> speedtest finished.")
+    } else {
+        SpeedtestResultPing.postUpdate(0)
+        SpeedtestResultDown.postUpdate(0)
+        SpeedtestResultUp.postUpdate(0)
+        SpeedtestSummary.postUpdate("(unbekannt)")
+        SpeedtestRunning.postUpdate("Fehler bei der Ausführung")
+        logError(filename, "--> speedtest failed. Output:\n" + speedtestCliOutput + "\n\n")
+    }
+    SpeedtestRerun.postUpdate(OFF)
+end
+
 //Tuerklingesensor
 
 rule "Event_DoorBell"
@@ -16,16 +80,16 @@ when
         Item GF_Klingel changed from OFF to ON
 then
 	 //logInfo("tuerklingel changed")
-	 var device="http://192.168.1.4:8081?action=jpeg"
+	 //var device="http://192.168.1.4:8081?action=jpeg"
 	 //val outputFile = "/home/openhabian/snap/tuerklingelbild.jpg"
 	 //var cmd = "curl -m 10 -o " + outputFile + " " + url
 
 	 var cmd ="ffmpeg -f MJPEG -y -i  http://192.168.1.4:8081?action=stream -r 1 -vframes 1 -q:v 1 /tmp/tuerklingelbild.jpg"
 	 executeCommandLine(cmd)
 	 //pushover("Es hat geklingelt!")
-	 Thread::sleep(5000)
+	 Thread::sleep(6000)
 	 //sendPushoverMessage(pushoverBuilder("test message").withAttachment("/path/to/file.jpeg"))
-	 sendPushoverMessage(pushoverBuilder("Hier das Bild!").withAttachment("/tmp/tuerklingelbild.jpg"))	
+	 sendPushoverMessage(pushoverBuilder("Es hat geklingelt!").withAttachment("/tmp/tuerklingelbild.jpg"))	
 	 //pushover("Es hat geklingelt!")
 	 
 end
@@ -130,8 +194,9 @@ then
 	logInfo("Log",leistungsmesserLeistung.state.toString)
 	if (leistungsmesserLeistung.state < 3 && statusTrockner.state==OFF)
 	{
-		sendNotification("uwe.stockemer@posteo.de", "Trockner ist fertig!")
+		//sendNotification("uwe.stockemer@posteo.de", "Trockner ist fertig!")
 		sendNotification("doris.ewen@posteo.de", "Trockner ist fertig!")
+		pushover("Trockner ist fertig")
 		statusTrockner.sendCommand(ON)
 		//logInfo("Log","statusTrockner <3")
 		//logInfo("Log",leistungsmesserLeistung.state.toString)
@@ -169,11 +234,10 @@ when
 	Item GF_TerraceLiving_Window received update
 
 then
-	logInfo("tuerklingel changed")
 	if (GF_TerraceLiving_Window.state.toString=="OPEN" && Alarmswitch.state==ON)
 	{
  	pushover("Achtung Eindringling im Wohnzimmer")
-	alarmbox.sendCommand(ON) 
+//	alarmbox.sendCommand(ON) 
         }     
 	
 
@@ -237,7 +301,6 @@ when Item Heizung_down received command
 
 then
 
-        var newValue = 15
 	if (receivedCommand == ON)
 	{
 	he_set_temp_GF_Bathroom_Temperature.postUpdate(15)

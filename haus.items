@@ -28,34 +28,60 @@ Group 	  Light_LivingDining		"Lampen"	<light>		(Home, GF_LivingDining)
 
 
 
+//Speedtest
+Group gSpeedtest <"network-icon"> (Whg)
+
+String      SpeedtestSummary        "Speedtest [%s]"             <"speedtest_network">       (gSpeedtest)
+Number      SpeedtestResultPing     "Ping [%.3f ms]"             <"speedtest_next5">         (gSpeedtest)
+Number      SpeedtestResultDown     "Downlink [%.2f Mbit/s]"     <"speedtest_download">      (gSpeedtest)
+Number      SpeedtestResultUp       "Uplink [%.2f Mbit/s]"       <"speedtest_upload">        (gSpeedtest)
+String      SpeedtestRunning        "Speedtest running ... [%s]" <"speedtest_new">           (gSpeedtest)
+Switch      SpeedtestRerun          "Start manually"             <"speedtest_reload2">       (gSpeedtest)
+DateTime    SpeedtestResultDate     "Last executed [%1$td.%1$tm.%1$tY, %1$tH:%1$tM Uhr]"   <"speedtest_problem4">      (gSpeedtest)
+
+
+
 //Items Things
-//String Feuchtigkeit_node "Feuchtigkeit Boden [%s]" <garden> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:feuchtigkeit_node"}
+String Feuchtigkeit_node "Feuchtigkeit Boden [%s]" <garden> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren_feuchtemesser:feuchtigkeit_node"}
 
-String Wind_node "Windsensor [%s]" <wind> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:wind_node"}
+Number Wind_gesch "Windsensor Dach [%.1f KM]" <wind> (GG_Outside, gOutside){channel="mqtt:topic:brokerhome:sensoren:wind_gesch"}
+
+////
 //Aussentempheratur // muss noch gemacht werden
-Number Outside_Temperature   "Measured temperature mobile [%.1f °C]"    <temperature>   (GG_Outside gTemperature)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#ACTUAL_TEMPERATURE"}
+Number    GF_Outside_Temperature   "Measured temperature mobile [%.1f °C]"    <temperature>   (GG_Outside, gOutside)      {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#ACTUAL_TEMPERATURE"}
+//Battery Aussentemp
+Number	  GF_Outside_Temperature_BATTERY_STATE "Battery Outside Voltage  [%.1f V]"	<energy>	(GG_Outside, gOutside) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#BATTERY_STATE"}
+Switch    GF_Outside_Temperature_BATTERY_low_Bat "Battery Outside Low [%s]" <battery> (GG_Outside, gOutside) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:0#LOWBAT"}
 
-//LED OSRAM
-Switch LEDOsram_Schalter {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
+//LED OSRAM TV Hintergrundbeleuchtung
+Switch LEDOsram_Schalter {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"} 
 Color changeLEDOsram <colorpicker> {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_color"}
 Color LEDOsram_farbtemperatur "Lightstrip Farbtemperatur" {channel="zigbee:device:edfce48b:7cb03eaa00ab4184:7CB03EAA00AB4184_3_colortemperature"}
 
+//LED OSRAM Terassenbeleuchtung
+Switch LEDOsram_Schalter_Terasse {channel="zigbee:device:edfce48b:7cb03eaa00b13478:7CB03EAA00B13478_3_color"}
+Color changeLEDOsram_Terasse <colorpicker> {channel="zigbee:device:edfce48b:7cb03eaa00b13478:7CB03EAA00B13478_3_color"}
+Color LEDOsram_farbtemperatur_Terasse "Lampe Farbtemperatur" {channel="zigbee:device:edfce48b:7cb03eaa00b13478:7CB03EAA00B13478_3_colortemperature"}
 
 //LED ESP
-Switch changeLEDblue <LED_TV_Blue> { channel="mqtt:topic:brokerhome:ledblue:changeLEDblue" }
+//Switch changeLEDblue <LED_TV_Blue> { channel="mqtt:topic:brokerhome:ledblue:changeLEDblue" }
 
-Switch changeLEDred <LED_TV_Red> { channel="mqtt:topic:brokerhome:ledred:changeLEDred" }
+//Switch changeLEDred <LED_TV_Red> { channel="mqtt:topic:brokerhome:ledred:changeLEDred" }
 
-Switch changeLEDgreen <LED_TV_Green> { channel="mqtt:topic:brokerhome:ledgreen:changeLEDgreen" }
+//Switch changeLEDgreen <LED_TV_Green> { channel="mqtt:topic:brokerhome:ledgreen:changeLEDgreen" }
 
-Switch changeLEDall <LED_TV_all> { channel="mqtt:topic:brokerhome:ledall:changeLEDall" }
+//Switch changeLEDall <LED_TV_all> { channel="mqtt:topic:brokerhome:ledall:changeLEDall" }
 
 
 //Wand Thermostat für alle Wohnzimmer Kueche Esszimmer Anzeige Temperatur
 Number    GF_total_Temperature   "Total temperature global [%.1f °C]"    <temperature>   (GF_StreedLiving,gTemperature){ channel="homematic:HG-HM-TC-IT-WM-W-EU:008b1085:OEQ1671164:2#ACTUAL_TEMPERATURE" } 
                                                                                                                                
 
+////
+
+
 Number    he_set_GF_total_Temperature "Set Manu Mode [%.1f °C]" <temperature> (GF_StreedLiving, gTemperature){ channel="homematic:HG-HM-TC-IT-WM-W-EU:008b1085:OEQ1671164:2#MANU_MODE" }
+
 
 
 //haustuerklingel
@@ -100,11 +126,6 @@ Number leistungsmesserSummeKwh     "Summe KWH [%.1f Watt]" (GG_Washroom) {channe
 Switch leistungsmesserSchalten     "Status Socket"    		       (GG_Washroom)  {channel="homematic:HG-HM-ES-PMSw1-Pl:008b1085:LEQ0928112:1#STATE"}
 Switch statusTrockner		   "Dryer finish"    		       (GG_Washroom)  
 
-////
-
-//Battery Aussentemp
-Number	  GF_Outside_Temperature_BATTERY_STATE "Battery Outside Voltage  [%.1f V]"	<energy>	(GF_TerraceLiving, gBattery) 		{channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:4#BATTERY_STATE"}
-Switch    GF_Outside_Temperature_BATTERY_low_Bat "Battery Outside Low [%s]" <battery> (GF_TerraceLiving, gBattery) {channel="homematic:HG-HM-CC-RT-DN:008b1085:MEQ0450869:0#LOWBAT"}
 
 
 
